@@ -86,7 +86,7 @@ function appendDigit(number) {
   } else {
     if (secondOperand === "0") secondOperand = "";
 
-    secondOperand = secondOperand.concat(e.target.textContent);
+    secondOperand = secondOperand.concat(number);
     populateDisplay(currentDisplayDiv, roundLongDecimals(secondOperand));
   }
 }
