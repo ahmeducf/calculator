@@ -75,13 +75,13 @@ function populateDisplay(displayDiv, data) {
   displayDiv.textContent = data;
 }
 
-function appendDigit() {
+function appendDigit(number) {
   if (lmaoExist) return;
 
   if (currentOperator === null) {
     if (firstOperand === "0") firstOperand = "";
 
-    firstOperand = firstOperand.concat(e.target.textContent);
+    firstOperand = firstOperand.concat(number);
     populateDisplay(currentDisplayDiv, roundLongDecimals(firstOperand));
   } else {
     if (secondOperand === "0") secondOperand = "";
@@ -91,7 +91,7 @@ function appendDigit() {
   }
 }
 
-function setOperation() {
+function setOperation(e) {
   if (lmaoExist) return;
 
   if (secondOperand === "") {
@@ -148,10 +148,10 @@ function evaluateExpression() {
   secondOperand = "";
 }
 
-digitButtons.forEach((digit) => digit.addEventListener("click", appendDigit));
+digitButtons.forEach((digit) => digit.addEventListener("click", (e) => appendDigit(e.target.textContent)));
 
 operatorButtons.forEach((operator) =>
-  operator.addEventListener("click", setOperation)
+  operator.addEventListener("click", (e) => setOperation(e))
 );
 
 equalButton.addEventListener("click", evaluateExpression);
