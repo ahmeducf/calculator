@@ -15,6 +15,7 @@ const OPERATORS = {
 let currentOperator = null;
 let firstOperand = "0";
 let secondOperand = "";
+let lmaoExist = false;
 
 const operatorButtons = document.querySelectorAll(".operator");
 const digitButtons = document.querySelectorAll(".digit");
@@ -68,6 +69,8 @@ function populateDisplay(displayDiv, data) {
 
 digitButtons.forEach((digit) =>
   digit.addEventListener("click", (e) => {
+    if (lmaoExist) return;
+
     if (currentOperator === null) {
       firstOperand = firstOperand.concat(e.target.textContent);
       populateDisplay(currentDisplayDiv, Number(firstOperand));
@@ -80,6 +83,8 @@ digitButtons.forEach((digit) =>
 
 operatorButtons.forEach((operator) =>
   operator.addEventListener("click", (e) => {
+    if (lmaoExist) return;
+
     if (secondOperand === "") {
       currentOperator = e.target.getAttribute("data-operator");
       let template = `${+firstOperand} ${OPERATORS[currentOperator]}`;
@@ -87,6 +92,13 @@ operatorButtons.forEach((operator) =>
       populateDisplay(lastDisplayDiv, template);
     } else {
       firstOperand = operate(currentOperator, +firstOperand, +secondOperand);
+      if (!isFinite(firstOperand)) {
+        populateDisplay(currentDisplayDiv, "LMAO");
+        populateDisplay(lastDisplayDiv, "");
+        lmaoExist = true;
+
+        return;
+      }
 
       currentOperator = e.target.getAttribute("data-operator");
       secondOperand = "";
@@ -99,9 +111,17 @@ operatorButtons.forEach((operator) =>
 );
 
 equalButton.addEventListener('click', (e) => {
-  if (currentOperator === null || currentOperator === "") return;
+  if (currentOperator === null || currentOperator === "" || lmaoExist) return;
 
   const result = operate(currentOperator, +firstOperand, +secondOperand);
+  console.log(isFinite(result));
+  if (!isFinite(result)) {
+    populateDisplay(currentDisplayDiv, "LMAO");
+    populateDisplay(lastDisplayDiv, "");
+    lmaoExist = true;
+
+    return;
+  }
 
   const template = `${+firstOperand} ${OPERATORS[currentOperator]} ${+secondOperand} =`;
   populateDisplay(lastDisplayDiv, template);
@@ -114,6 +134,8 @@ equalButton.addEventListener('click', (e) => {
 });
 
 clearButton.addEventListener('click', (e) => {
+  if (lmaoExist) return;
+
   if (currentOperator === null) {
     firstOperand = firstOperand.slice(0, firstOperand.length-1);
     populateDisplay(currentDisplayDiv, +firstOperand);
@@ -127,7 +149,21 @@ allClearButton.addEventListener('click', (e) => {
   currentOperator = null;
   firstOperand = "0";
   secondOperand = "";
+  lmaoExist = false;
 
   populateDisplay(currentDisplayDiv, 0);
   populateDisplay(lastDisplayDiv, "");
 });
+
+decimalButton.addEventListener('click', (e) => {
+  if (currentDisplayDiv.textContent.includes(".") || lmaoExist)
+    return;
+
+  if (currentOperator === null) {
+    firstOperand = firstOperand.concat(".");
+    populateDisplay(currentDisplayDiv, `${+firstOperand}.`);
+  } else {
+    secondOperand = secondOperand.concat(".");
+    populateDisplay(currentDisplayDiv, `${+secondOperand}.`);
+  }
+})
