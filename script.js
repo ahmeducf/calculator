@@ -122,3 +122,12 @@ clearButton.addEventListener('click', (e) => {
     populateDisplay(currentDisplayDiv, +secondOperand);
   }
 });
+
+allClearButton.addEventListener('click', (e) => {
+  currentOperator = null;
+  firstOperand = "0";
+  secondOperand = "";
+
+  populateDisplay(currentDisplayDiv, 0);
+  populateDisplay(lastDisplayDiv, "");
+});
