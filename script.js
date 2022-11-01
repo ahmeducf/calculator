@@ -4,6 +4,14 @@ const MULTIPLY_OPERATOR = "multiply";
 const DIVIDE_OPERATOR = "divide";
 const MOD_OPERATOR = "mod";
 
+const OPERATORS = {
+  [ADD_OPERATOR]: "+",
+  [SUBTRACT_OPERATOR]: "-",
+  [MULTIPLY_OPERATOR]: "x",
+  [DIVIDE_OPERATOR]: "÷",
+  [MOD_OPERATOR]: "%",
+};
+
 let currentOperator = null;
 let firstOperand = "0";
 let secondOperand = "";
@@ -58,12 +66,45 @@ function populateDisplay(displayDiv, data) {
   displayDiv.textContent = data;
 }
 
-digitButtons.forEach((digit) => digit.addEventListener("click", (e) => {
-  if (currentOperator === null) {
-    firstOperand = firstOperand.concat(e.target.textContent);
-    populateDisplay(currentDisplayDiv, Number(firstOperand));
-  } else {
-    secondOperand = secondOperand.concat(e.target.textContent);
-    populateDisplay(lastDisplayDiv, Number(secondOperand));
-  }
-}));
+digitButtons.forEach((digit) =>
+  digit.addEventListener("click", (e) => {
+    if (currentOperator === null) {
+      firstOperand = firstOperand.concat(e.target.textContent);
+      populateDisplay(currentDisplayDiv, Number(firstOperand));
+    } else {
+      secondOperand = secondOperand.concat(e.target.textContent);
+      populateDisplay(currentDisplayDiv, Number(secondOperand));
+    }
+  })
+);
+
+operatorButtons.forEach((operator) =>
+  operator.addEventListener("click", (e) => {
+    if (secondOperand === "") {
+      currentOperator = e.target.getAttribute("data-operator");
+      let template = `${+firstOperand} ${OPERATORS[currentOperator]}`;
+
+      populateDisplay(lastDisplayDiv, template);
+    } else {
+      firstOperand = operate(currentOperator, +firstOperand, +secondOperand);
+
+      currentOperator = e.target.getAttribute("data-operator");
+      secondOperand = "";
+      let template = `${+firstOperand} ${OPERATORS[currentOperator]}`;
+      
+      populateDisplay(lastDisplayDiv, template);
+      populateDisplay(currentDisplayDiv, +firstOperand);
+    }
+  })
+);
+
+equalButton.addEventListener('click', (e) => {
+  if (currentOperator === null || currentOperator === "") return;
+
+  const result = operate(currentOperator, +firstOperand, +secondOperand);
+
+  const template = `${+firstOperand} ${OPERATORS[currentOperator]} ${+secondOperand} =`;
+  populateDisplay(lastDisplayDiv, template);
+
+  populateDisplay(currentDisplayDiv, result);
+});
