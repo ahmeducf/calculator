@@ -112,3 +112,13 @@ equalButton.addEventListener('click', (e) => {
   firstOperand = result.toString();
   secondOperand = "";
 });
+
+clearButton.addEventListener('click', (e) => {
+  if (currentOperator === null) {
+    firstOperand = firstOperand.slice(0, firstOperand.length-1);
+    populateDisplay(currentDisplayDiv, +firstOperand);
+  } else {
+    secondOperand = secondOperand.slice(0, secondOperand.length-1);
+    populateDisplay(currentDisplayDiv, +secondOperand);
+  }
+});
