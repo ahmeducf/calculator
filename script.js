@@ -107,4 +107,8 @@ equalButton.addEventListener('click', (e) => {
   populateDisplay(lastDisplayDiv, template);
 
   populateDisplay(currentDisplayDiv, result);
+
+  currentOperator = null;
+  firstOperand = result.toString();
+  secondOperand = "";
 });
