@@ -68,10 +68,12 @@ main .calculator {
 
 .calculator .display .display-current {
   font-size: 40px;
+  min-height: 50px;
 }
 
 .calculator .display .display-last {
   font-size: 20px;
+  min-height: 32px;
 }
 
 .calculator .buttons {
