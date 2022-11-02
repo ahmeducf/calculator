@@ -156,14 +156,17 @@ function evaluateExpression() {
   secondOperand = "";
 }
 
-function clearOne() {
+function clearSingleInput() {
   if (lmaoExist) return;
 
   if (currentOperator === null) {
     firstOperand = firstOperand.slice(0, firstOperand.length - 1);
+    firstOperand = (firstOperand === "") ? "0" : firstOperand;
+
     populateDisplay(currentDisplayDiv, roundLongDecimals(firstOperand));
   } else {
     secondOperand = secondOperand.slice(0, secondOperand.length - 1);
+
     populateDisplay(currentDisplayDiv, roundLongDecimals(secondOperand));
   }
 }
@@ -209,7 +212,7 @@ function handleKeyboardInput(e) {
   } else if (e.key === ".") {
     appendDecimal();
   } else if (e.key === "Backspace") {
-    clearOne();
+    clearSingleInput();
   } else if (e.key === "Escape") {
     clearAll();
   }
@@ -230,7 +233,7 @@ operatorButtons.forEach((operator) =>
 
 equalButton.addEventListener("click", evaluateExpression);
 
-clearButton.addEventListener("click", clearOne);
+clearButton.addEventListener("click", clearSingleInput);
 
 allClearButton.addEventListener("click", clearAll);
 
