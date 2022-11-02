@@ -192,7 +192,6 @@ function appendDecimal() {
 }
 
 function handleKeyboardInput(e) {
-  console.log(e);
   if (!e.shiftKey && e.key >= 0 && e.key <= 9) {
     appendDigit(e.key);
   } else if (e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/") {
