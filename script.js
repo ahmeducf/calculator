@@ -7,10 +7,15 @@ const MOD_OPERATOR = "mod";
 
 const OPERATORS = {
   [ADD_OPERATOR]: "+",
+  "+": "+",
   [SUBTRACT_OPERATOR]: "-",
+  "-": "-",
   [MULTIPLY_OPERATOR]: "x",
+  "*": "x",
   [DIVIDE_OPERATOR]: "÷",
+  "/": "÷",
   [MOD_OPERATOR]: "%",
+  "%": "%",
 };
 
 let currentOperator = null;
@@ -54,15 +59,15 @@ function operate(operator, op1, op2) {
   let result;
   op1 = Number(op1);
   op2 = Number(op2);
-  if (operator === ADD_OPERATOR) {
+  if (operator === OPERATORS[ADD_OPERATOR]) {
     result = add(op1, op2);
-  } else if (operator === SUBTRACT_OPERATOR) {
+  } else if (operator === OPERATORS[SUBTRACT_OPERATOR]) {
     result = subtract(op1, op2);
-  } else if (operator === MULTIPLY_OPERATOR) {
+  } else if (operator === OPERATORS[MULTIPLY_OPERATOR]) {
     result = multiply(op1, op2);
-  } else if (operator === DIVIDE_OPERATOR) {
+  } else if (operator === OPERATORS[DIVIDE_OPERATOR]) {
     result = divide(op1, op2);
-  } else if (operator === MOD_OPERATOR) {
+  } else if (operator === OPERATORS[MOD_OPERATOR]) {
     result = mod(op1, op2);
   }
 
@@ -81,10 +86,8 @@ function populateDisplay(displayDiv, data) {
   displayDiv.textContent = data;
 }
 
-function appendDigit(e) {
+function appendDigit(digit) {
   if (lmaoExist) return;
-
-  const digit = e.target.getAttribute("data-digit");
 
   if (currentOperator === null) {
     if (firstOperand === "0") firstOperand = "";
@@ -99,14 +102,14 @@ function appendDigit(e) {
   }
 }
 
-function setOperation(e) {
+function setOperation(operator) {
   if (lmaoExist) return;
 
   if (secondOperand === "") {
-    currentOperator = e.target.getAttribute("data-operator");
+    currentOperator = OPERATORS[operator];
     firstOperand = roundLongDecimals(firstOperand);
 
-    let template = `${firstOperand} ${OPERATORS[currentOperator]}`;
+    let template = `${firstOperand} ${currentOperator}`;
     populateDisplay(lastDisplayDiv, template);
   } else {
     firstOperand = roundLongDecimals(firstOperand);
@@ -121,11 +124,9 @@ function setOperation(e) {
       return;
     }
 
-    currentOperator = e.target.getAttribute("data-operator");
+    currentOperator = OPERATORS[operator];
     secondOperand = "";
-    let template = `${roundLongDecimals(firstOperand)} ${
-      OPERATORS[currentOperator]
-    }`;
+    let template = `${roundLongDecimals(firstOperand)} ${currentOperator}`;
 
     populateDisplay(lastDisplayDiv, template);
     populateDisplay(currentDisplayDiv, roundLongDecimals(firstOperand));
@@ -133,9 +134,9 @@ function setOperation(e) {
 }
 
 function evaluateExpression() {
-  if (currentOperator === null || currentOperator === "" || lmaoExist) return;
+  if (currentOperator === null || secondOperand === "" || lmaoExist) return;
 
-  const result = operate(currentOperator, +firstOperand, +secondOperand);
+  const result = operate(currentOperator, firstOperand, secondOperand);
   if (!isFinite(result)) {
     populateDisplay(currentDisplayDiv, "LMAO");
     populateDisplay(lastDisplayDiv, "");
@@ -144,9 +145,9 @@ function evaluateExpression() {
     return;
   }
 
-  const template = `${roundLongDecimals(firstOperand)} ${
-    OPERATORS[currentOperator]
-  } ${roundLongDecimals(secondOperand)} =`;
+  const op1 = roundLongDecimals(firstOperand);
+  const op2 = roundLongDecimals(secondOperand);
+  const template = `${op1} ${currentOperator} ${op2} =`;
   populateDisplay(lastDisplayDiv, template);
   populateDisplay(currentDisplayDiv, roundLongDecimals(result));
 
@@ -190,13 +191,42 @@ function appendDecimal() {
   }
 }
 
+function handleKeyboardInput(e) {
+  console.log(e);
+  if (!e.shiftKey && e.key >= 0 && e.key <= 9) {
+    appendDigit(e.key);
+  } else if (e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/") {
+    setOperation(e.key);
+  } else if (e.keyCode === 56 && e.shiftKey) {
+    setOperation("*");
+  } else if (e.keyCode === 187 && e.shiftKey) {
+    setOperation("+");
+  } else if (e.keyCode === 189) {
+    setOperation("-");
+  } else if (e.keyCode === 53 && e.shiftKey) {
+    setOperation("%");
+  } else if (e.key === "Enter" || e.key === "=") {
+    evaluateExpression();
+  } else if (e.key === ".") {
+    appendDecimal();
+  } else if (e.key === "Backspace") {
+    clearOne();
+  } else if (e.key === "Escape") {
+    clearAll();
+  }
+}
+
 /* Event Listeners */
 digitButtons.forEach((button) =>
-  button.addEventListener("click", (e) => appendDigit(e))
+  button.addEventListener("click", (e) =>
+    appendDigit(e.target.getAttribute("data-digit"))
+  )
 );
 
 operatorButtons.forEach((operator) =>
-  operator.addEventListener("click", (e) => setOperation(e))
+  operator.addEventListener("click", (e) =>
+    setOperation(e.target.getAttribute("data-operator"))
+  )
 );
 
 equalButton.addEventListener("click", evaluateExpression);
@@ -206,3 +236,5 @@ clearButton.addEventListener("click", clearOne);
 allClearButton.addEventListener("click", clearAll);
 
 decimalButton.addEventListener("click", appendDecimal);
+
+window.addEventListener("keydown", (e) => handleKeyboardInput(e));
