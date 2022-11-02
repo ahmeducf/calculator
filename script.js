@@ -56,22 +56,33 @@ function mod(op1, op2) {
 
 // (operator: string, op1: string, op2: string) --> result: string
 function operate(operator, op1, op2) {
-  let result;
+  let result = null;
   op1 = Number(op1);
   op2 = Number(op2);
-  if (operator === OPERATORS[ADD_OPERATOR]) {
-    result = add(op1, op2);
-  } else if (operator === OPERATORS[SUBTRACT_OPERATOR]) {
-    result = subtract(op1, op2);
-  } else if (operator === OPERATORS[MULTIPLY_OPERATOR]) {
-    result = multiply(op1, op2);
-  } else if (operator === OPERATORS[DIVIDE_OPERATOR]) {
-    result = divide(op1, op2);
-  } else if (operator === OPERATORS[MOD_OPERATOR]) {
-    result = mod(op1, op2);
+
+  switch (operator) {
+    case OPERATORS[ADD_OPERATOR]:
+      result = add(op1, op2);
+      break;
+    case OPERATORS[SUBTRACT_OPERATOR]:
+      result = subtract(op1, op2);
+      break;
+    case OPERATORS[MULTIPLY_OPERATOR]:
+      result = multiply(op1, op2);
+      break;
+    case OPERATORS[DIVIDE_OPERATOR]:
+      result = divide(op1, op2);
+      break;
+    case OPERATORS[MOD_OPERATOR]:
+      result = mod(op1, op2);
+      break;
+    default:
+      break;
   }
 
-  return result.toString();
+  if (result) result.toString();
+
+  return result;
 }
 
 function roundLongDecimals(numberString) {
@@ -156,7 +167,7 @@ function evaluateExpression() {
   secondOperand = "";
 }
 
-function clearSingleInput() {
+function clearSingleDigit() {
   if (lmaoExist) return;
 
   if (currentOperator === null) {
@@ -212,7 +223,7 @@ function handleKeyboardInput(e) {
   } else if (e.key === ".") {
     appendDecimal();
   } else if (e.key === "Backspace") {
-    clearSingleInput();
+    clearSingleDigit();
   } else if (e.key === "Escape") {
     clearAll();
   }
@@ -233,7 +244,7 @@ operatorButtons.forEach((operator) =>
 
 equalButton.addEventListener("click", evaluateExpression);
 
-clearButton.addEventListener("click", clearSingleInput);
+clearButton.addEventListener("click", clearSingleDigit);
 
 allClearButton.addEventListener("click", clearAll);
 
