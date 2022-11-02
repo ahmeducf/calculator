@@ -127,6 +127,8 @@ function setOperation(operator) {
     secondOperand = roundLongDecimals(secondOperand);
 
     firstOperand = operate(currentOperator, firstOperand, secondOperand);
+    if (!firstOperand) return;
+
     if (!isFinite(firstOperand)) {
       populateDisplay(currentDisplayDiv, "LMAO");
       populateDisplay(lastDisplayDiv, "");
@@ -148,6 +150,8 @@ function evaluateExpression() {
   if (currentOperator === null || secondOperand === "" || lmaoExist) return;
 
   const result = operate(currentOperator, firstOperand, secondOperand);
+  if (!result) return;
+
   if (!isFinite(result)) {
     populateDisplay(currentDisplayDiv, "LMAO");
     populateDisplay(lastDisplayDiv, "");
@@ -172,7 +176,7 @@ function clearSingleDigit() {
 
   if (currentOperator === null) {
     firstOperand = firstOperand.slice(0, firstOperand.length - 1);
-    firstOperand = (firstOperand === "") ? "0" : firstOperand;
+    firstOperand = firstOperand === "" ? "0" : firstOperand;
 
     populateDisplay(currentDisplayDiv, roundLongDecimals(firstOperand));
   } else {
