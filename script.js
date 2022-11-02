@@ -1,3 +1,4 @@
+/* Constants */
 const ADD_OPERATOR = "add";
 const SUBTRACT_OPERATOR = "subtract";
 const MULTIPLY_OPERATOR = "multiply";
@@ -17,6 +18,7 @@ let firstOperand = "0";
 let secondOperand = "";
 let lmaoExist = false;
 
+/* DOM Elements References */
 const operatorButtons = document.querySelectorAll(".operator");
 const digitButtons = document.querySelectorAll(".digit");
 const decimalButton = document.querySelector(".decimal");
@@ -26,6 +28,7 @@ const allClearButton = document.querySelector(".all-clear");
 const currentDisplayDiv = document.querySelector(".display-current");
 const lastDisplayDiv = document.querySelector(".display-last");
 
+/* Functions */
 function add(op1, op2) {
   return op1 + op2;
 }
@@ -46,8 +49,11 @@ function mod(op1, op2) {
   return op1 % op2;
 }
 
+// (operator: string, op1: string, op2: string) --> result: string
 function operate(operator, op1, op2) {
   let result;
+  op1 = Number(op1);
+  op2 = Number(op2);
   if (operator === ADD_OPERATOR) {
     result = add(op1, op2);
   } else if (operator === SUBTRACT_OPERATOR) {
@@ -75,18 +81,20 @@ function populateDisplay(displayDiv, data) {
   displayDiv.textContent = data;
 }
 
-function appendDigit(number) {
+function appendDigit(e) {
   if (lmaoExist) return;
+
+  const digit = e.target.getAttribute("data-digit");
 
   if (currentOperator === null) {
     if (firstOperand === "0") firstOperand = "";
+    firstOperand = firstOperand.concat(digit);
 
-    firstOperand = firstOperand.concat(number);
     populateDisplay(currentDisplayDiv, roundLongDecimals(firstOperand));
   } else {
     if (secondOperand === "0") secondOperand = "";
+    secondOperand = secondOperand.concat(digit);
 
-    secondOperand = secondOperand.concat(number);
     populateDisplay(currentDisplayDiv, roundLongDecimals(secondOperand));
   }
 }
@@ -99,7 +107,6 @@ function setOperation(e) {
     firstOperand = roundLongDecimals(firstOperand);
 
     let template = `${firstOperand} ${OPERATORS[currentOperator]}`;
-
     populateDisplay(lastDisplayDiv, template);
   } else {
     firstOperand = roundLongDecimals(firstOperand);
@@ -148,15 +155,7 @@ function evaluateExpression() {
   secondOperand = "";
 }
 
-digitButtons.forEach((digit) => digit.addEventListener("click", (e) => appendDigit(e.target.textContent)));
-
-operatorButtons.forEach((operator) =>
-  operator.addEventListener("click", (e) => setOperation(e))
-);
-
-equalButton.addEventListener("click", evaluateExpression);
-
-clearButton.addEventListener("click", (e) => {
+function clearOne() {
   if (lmaoExist) return;
 
   if (currentOperator === null) {
@@ -166,9 +165,9 @@ clearButton.addEventListener("click", (e) => {
     secondOperand = secondOperand.slice(0, secondOperand.length - 1);
     populateDisplay(currentDisplayDiv, roundLongDecimals(secondOperand));
   }
-});
+}
 
-allClearButton.addEventListener("click", (e) => {
+function clearAll() {
   currentOperator = null;
   firstOperand = "0";
   secondOperand = "";
@@ -176,9 +175,9 @@ allClearButton.addEventListener("click", (e) => {
 
   populateDisplay(currentDisplayDiv, 0);
   populateDisplay(lastDisplayDiv, "");
-});
+}
 
-decimalButton.addEventListener("click", (e) => {
+function appendDecimal() {
   if (currentDisplayDiv.textContent.includes(".") || lmaoExist) return;
 
   if (currentOperator === null) {
@@ -189,4 +188,21 @@ decimalButton.addEventListener("click", (e) => {
     secondOperand = secondOperand.concat(".");
     populateDisplay(currentDisplayDiv, `${secondOperand}`);
   }
-});
+}
+
+/* Event Listeners */
+digitButtons.forEach((button) =>
+  button.addEventListener("click", (e) => appendDigit(e))
+);
+
+operatorButtons.forEach((operator) =>
+  operator.addEventListener("click", (e) => setOperation(e))
+);
+
+equalButton.addEventListener("click", evaluateExpression);
+
+clearButton.addEventListener("click", clearOne);
+
+allClearButton.addEventListener("click", clearAll);
+
+decimalButton.addEventListener("click", appendDecimal);
