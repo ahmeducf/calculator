@@ -80,9 +80,7 @@ function operate(operator, op1, op2) {
       break;
   }
 
-  if (result) result.toString();
-
-  return result;
+  return result.toString();
 }
 
 function roundLongDecimals(numberString) {
@@ -127,9 +125,9 @@ function setOperation(operator) {
     secondOperand = roundLongDecimals(secondOperand);
 
     firstOperand = operate(currentOperator, firstOperand, secondOperand);
-    if (!firstOperand) return;
+    if (firstOperand === null) return;
 
-    if (!isFinite(firstOperand)) {
+    if (!isFinite(Number(firstOperand))) {
       populateDisplay(currentDisplayDiv, "LMAO");
       populateDisplay(lastDisplayDiv, "");
       lmaoExist = true;
@@ -150,9 +148,9 @@ function evaluateExpression() {
   if (currentOperator === null || secondOperand === "" || lmaoExist) return;
 
   const result = operate(currentOperator, firstOperand, secondOperand);
-  if (!result) return;
+  if (result === null) return;
 
-  if (!isFinite(result)) {
+  if (!isFinite(Number(result))) {
     populateDisplay(currentDisplayDiv, "LMAO");
     populateDisplay(lastDisplayDiv, "");
     lmaoExist = true;
@@ -163,6 +161,7 @@ function evaluateExpression() {
   const op1 = roundLongDecimals(firstOperand);
   const op2 = roundLongDecimals(secondOperand);
   const template = `${op1} ${currentOperator} ${op2} =`;
+
   populateDisplay(lastDisplayDiv, template);
   populateDisplay(currentDisplayDiv, roundLongDecimals(result));
 
