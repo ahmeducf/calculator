@@ -85,7 +85,7 @@ function operate(operator, op1, op2) {
 
 function roundLongDecimals(numberString) {
   if (numberString.length > 10) {
-    return (+numberString).toPrecision(8);
+    return (+numberString).toPrecision(4);
   }
 
   return numberString;
